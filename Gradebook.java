@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 
 public class Gradebook {
-    private ArrayList<Student> students;
+    private ArrayList<Student> students = new ArrayList<>();
     private static Gson gson = new Gson();
 
     public void addStudent(Student student) {
@@ -17,7 +17,7 @@ public class Gradebook {
 
     public void save() {
         try (Writer writer = new FileWriter("studentData.json")) {
-            gson.toJson(students, writer);
+            writer.write(gson.toJson(this));
         } catch (IOException e) {
 
         }
@@ -46,10 +46,12 @@ public class Gradebook {
 
     @Override
     public String toString() {
-        String formattedString;
+        String formattedString = "";
 
         for(Student student : students) {
-
+            formattedString += student.getName() + "\n";
         }
+
+        return formattedString;
     }
 }

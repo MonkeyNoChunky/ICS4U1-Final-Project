@@ -5,8 +5,8 @@ public class Subject {
     private int testsWeight;
     private int assignmentsWeight;
     private int examWeight;
-    private ArrayList<Assessment> tests;
-    private ArrayList<Assessment> assignments;
+    private ArrayList<Assessment> tests = new ArrayList<>();
+    private ArrayList<Assessment> assignments = new ArrayList<>();
     private Assessment exam; 
 
     public Subject(String name, int testsWeight, int assignmentsWeight, int examWeight) {
@@ -29,6 +29,6 @@ public class Subject {
     }
 
     public void getAverage() {
-        
+
     }
 }
