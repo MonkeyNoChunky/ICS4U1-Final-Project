@@ -47,11 +47,9 @@ public class Gradebook {
     @Override
     public String toString() {
         String formattedString = "";
-
         for(Student student : students) {
             formattedString += student.getName() + "\n";
         }
-
         return formattedString;
     }
 }

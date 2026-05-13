@@ -2,14 +2,14 @@ import java.util.ArrayList;
 
 public class Subject {
     private String name;
-    private int testsWeight;
-    private int assignmentsWeight;
-    private int examWeight;
+    private double testsWeight;
+    private double assignmentsWeight;
+    private double examWeight;
     private ArrayList<Assessment> tests = new ArrayList<>();
     private ArrayList<Assessment> assignments = new ArrayList<>();
     private Assessment exam; 
 
-    public Subject(String name, int testsWeight, int assignmentsWeight, int examWeight) {
+    public Subject(String name, double testsWeight, double assignmentsWeight, double examWeight) {
         this.name = name;
         this.testsWeight = testsWeight;
         this.assignmentsWeight = assignmentsWeight;
@@ -28,7 +28,19 @@ public class Subject {
         }
     }
 
-    public void getAverage() {
-
+    public double getAverage() {
+        double average = 0;
+        for (Assessment test : tests) {
+            average += test.getScore() * testsWeight;
+        }
+        for (Assessment assignment : assignments) {
+            average += assignment.getScore() * assignmentsWeight;
+        }
+        if (exam != null) {
+            average += exam.getScore() * examWeight;
+        }
+        return average;
     }
+
+    
 }
