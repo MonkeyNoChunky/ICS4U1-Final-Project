@@ -42,5 +42,5 @@ public class Subject {
         return average;
     }
 
-    
+
 }

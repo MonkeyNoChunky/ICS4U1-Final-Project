@@ -1,6 +1,8 @@
 {
     "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "gson-2.10.1.jar"
+        "/Users/owenfong/Documents/GitHub/ICS4U1-Final-Project/gson-2.10.1.jar"
+    ],
+    "java.project.sourcePaths": [
+        "."
     ]
 }
