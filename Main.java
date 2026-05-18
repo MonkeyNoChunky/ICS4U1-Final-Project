@@ -12,7 +12,7 @@ public class Main extends Application {
         Gradebook gradebook = new Gradebook(); 
         gradebook.load();
         App app = new App();
-        app.init(stage, gradebook);
+        // app.init(stage, gradebook);
         System.out.println(gradebook.toString());
     }
 
