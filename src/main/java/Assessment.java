@@ -14,7 +14,20 @@ public class Assessment {
     public String getType() {
         return type;
     }
+
+    public String getName() {
+        return name;
+    }
+
     public double getScore() {
         return score/maxScore;
+    }
+
+    public double getRawScore() {
+        return score;
+    }
+
+    public double getMaxScore() {
+        return maxScore;
     }
 }

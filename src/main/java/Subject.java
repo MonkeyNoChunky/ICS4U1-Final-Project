@@ -42,5 +42,19 @@ public class Subject {
         return average;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public ArrayList<Assessment> getTests() {
+        return tests;
+    }
+
+    public ArrayList<Assessment> getAssignments() {
+        return assignments;
+    }
+
+    public Assessment getExam() {
+        return exam;
+    }
 }

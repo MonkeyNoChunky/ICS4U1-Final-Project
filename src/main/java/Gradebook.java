@@ -52,4 +52,17 @@ public class Gradebook {
         }
         return formattedString;
     }
+
+    public Student getStudentByName(String name) {
+        for (Student student : students) {
+            if (student.getName().equalsIgnoreCase(name)) {
+                return student;
+            }
+        }
+        return null;
+    }
+
+    public boolean removeStudent(String name) {
+        return students.removeIf(s -> s.getName().equalsIgnoreCase(name));
+    }
 }

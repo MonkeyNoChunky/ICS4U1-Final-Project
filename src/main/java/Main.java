@@ -8,12 +8,12 @@ public class Main extends Application {
         launch(args);
     }
 
+    @Override
     public void start(Stage stage) throws IOException {
         Gradebook gradebook = new Gradebook(); 
         gradebook.load();
+        
         App app = new App();
         app.init(stage, gradebook);
-        System.out.println(gradebook.toString());
     }
-
 }
