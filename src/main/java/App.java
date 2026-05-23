@@ -43,6 +43,7 @@ public class App {
     @FXML private TextField scoreField;
     @FXML private TextField maxScoreField;
     @FXML private Button newAssessmentButton;
+    @FXML private ListView<Assessment> assessmentsList;
 
     /**
     * Loads the FXML file, matches a MusicApp instance with the FXML loader, 
@@ -85,7 +86,7 @@ public class App {
 
         // Creating the right click menu for students
         ContextMenu studentMenu = new ContextMenu();
-        MenuItem deleteStudentItem = new MenuItem("delete playlist");
+        MenuItem deleteStudentItem = new MenuItem("delete student");
         studentMenu.getItems().add(deleteStudentItem);
         studentsList.setContextMenu(studentMenu);
 
