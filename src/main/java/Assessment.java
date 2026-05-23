@@ -30,4 +30,9 @@ public class Assessment {
     public double getMaxScore() {
         return maxScore;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

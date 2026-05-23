@@ -28,18 +28,41 @@ public class Subject {
         }
     }
 
+    public void removeAssessment(Assessment assessment) {
+        if (assessment.getType().equals("exam") && exam == assessment) {
+            exam = null;
+        } else if (assessment.getType().equals("test")) {
+            tests.remove(assessment);
+        } else if (assessment.getType().equals("assignment")) {
+            assignments.remove(assessment);
+        }
+    }
+
     public double getAverage() {
-        double average = 0;
-        for (Assessment test : tests) {
-            average += test.getScore() * testsWeight;
+        double total = 0;
+        double activeWeight = 0;
+
+        if (!tests.isEmpty()) {
+            double testAvg = 0;
+            for (Assessment test : tests) testAvg += test.getScore();
+            total += (testAvg / tests.size()) * testsWeight;
+            activeWeight += testsWeight;
         }
-        for (Assessment assignment : assignments) {
-            average += assignment.getScore() * assignmentsWeight;
+
+        if (!assignments.isEmpty()) {
+            double assignAvg = 0;
+            for (Assessment assignment : assignments) assignAvg += assignment.getScore();
+            total += (assignAvg / assignments.size()) * assignmentsWeight;
+            activeWeight += assignmentsWeight;
         }
+
         if (exam != null) {
-            average += exam.getScore() * examWeight;
+            total += exam.getScore() * examWeight;
+            activeWeight += examWeight;
         }
-        return average;
+
+        if (activeWeight == 0) return 0;
+        return total / activeWeight;
     }
 
     public String getName() {
@@ -56,6 +79,18 @@ public class Subject {
 
     public Assessment getExam() {
         return exam;
+    }
+
+    public double getTestsWeight() {
+        return testsWeight;
+    }
+
+    public double getAssignmentsWeight() {
+        return assignmentsWeight;
+    }
+
+    public double getExamWeight() {
+        return examWeight;
     }
 
     @Override

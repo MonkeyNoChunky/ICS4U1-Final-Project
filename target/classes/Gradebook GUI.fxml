@@ -48,15 +48,15 @@
       </VBox>
    </left>
    <right>
-      <VBox fx:id="rightPanel" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-pref-width: 520; -fx-spacing: -20; -fx-padding: 20;" BorderPane.alignment="CENTER">
+      <VBox fx:id="rightPanel" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-pref-width: 520; -fx-spacing: 20; -fx-padding: 20;" BorderPane.alignment="CENTER">
          <children>
-            <ComboBox fx:id="assessmentTypeBox" editable="true" prefWidth="150.0" style="-fx-padding: 50;" />
-            <TextField fx:id="newAssessmentField" alignment="TOP_CENTER" promptText="New Assessment Name" style="-fx-padding: 20;">
+            <ComboBox fx:id="assessmentTypeBox" prefHeight="0.0" prefWidth="268.0" />
+            <TextField fx:id="newAssessmentField" alignment="TOP_CENTER" prefHeight="38.0" prefWidth="480.0" promptText="New Assessment Name" style="-fx-padding: 20;">
                <font>
                   <Font size="15.0" />
                </font>
             </TextField>
-            <HBox prefHeight="37.0" prefWidth="290.0" style="-fx-padding: 40;">
+            <HBox prefHeight="37.0" prefWidth="290.0">
                <children>
                   <TextField fx:id="scoreField" promptText="score">
                      <font>
@@ -71,7 +71,12 @@
                   <Button fx:id="newAssessmentButton" mnemonicParsing="false" text="New Assessment" />
                </children>
             </HBox>
-            <ListView fx:id="assessmentsList" prefHeight="289.0" prefWidth="480.0" style="-fx-padding: 100;" />
+            <Label text="Assessments">
+               <font>
+                  <Font size="19.0" />
+               </font>
+            </Label>
+            <ListView fx:id="assessmentsList" prefHeight="336.0" prefWidth="480.0" />
          </children>
       </VBox>
    </right>

@@ -11,14 +11,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class App {
 
-    // importing FXML GUI components from GUI.fxml 
     @FXML private BorderPane appBorder;
     @FXML private VBox leftPanel;
     @FXML private Label studentsLabel;
@@ -45,112 +43,176 @@ public class App {
     @FXML private Button newAssessmentButton;
     @FXML private ListView<Assessment> assessmentsList;
 
-    /**
-    * Loads the FXML file, matches a MusicApp instance with the FXML loader, 
-    * and starts the app
-    *
-    * @param stage the main JavaFX stage
-    * @param gradebook the libraryData instance used to store songs and playists
-    * @throws IOException if GUI.fxml can't be loaded
-    */
     public void init(Stage stage, Gradebook gradebook) throws IOException {
         FXMLLoader loader = new FXMLLoader(App.class.getResource("Gradebook GUI.fxml"));
         Parent scene = loader.load();
 
-        // Gets the controller attached to the FXML to setup the app
         App app = loader.getController();
         app.setup(gradebook);
 
-        stage.setTitle("gradebook app");
+        stage.setTitle("Gradebook App");
         stage.setScene(new Scene(scene, 1100, 600));
         stage.setResizable(false);
         stage.show();
     }
 
-    /**
-    * Setup the GUI by loading data into ListViews, assigning icons,
-    * adding contextMenus, and coding all event listeners
-    *
-    * @param libraryData libraryData instance used for songs and playlists
-    * @param musicPlayer musicPlayer instance used for playback
-    */
     public void setup(Gradebook gradebook) {
-        // Fill the library panel with the saved student data
+        // Populate assessment type dropdown
+        assessmentTypeBox.getItems().addAll("assignment", "test", "exam");
+        assessmentTypeBox.setValue("assignment");
+
+        // Load saved students
         studentsList.getItems().addAll(gradebook.getStudents());
-        // Automatically default to the song library on load
         studentsList.getSelectionModel().select(0);
-        // subjectsList.getItems().setAll(allSongsPlaylist.getSongs());
 
-        // Fill the songs panel with all the songs in the library
-        // songsList.getItems().addAll(libraryData.getSongs());
+        // Load subjects for the initially selected student
+        Student initialStudent = studentsList.getSelectionModel().getSelectedItem();
+        if (initialStudent != null) {
+            subjectsList.getItems().setAll(initialStudent.getSubjects());
+        }
 
-        // Creating the right click menu for students
+        // Right-click menus
         ContextMenu studentMenu = new ContextMenu();
         MenuItem deleteStudentItem = new MenuItem("delete student");
         studentMenu.getItems().add(deleteStudentItem);
         studentsList.setContextMenu(studentMenu);
 
-        // Creating a right-click menu for the subjects
         ContextMenu subjectMenu = new ContextMenu();
         MenuItem deleteSubjectItem = new MenuItem("delete subject");
+        subjectMenu.getItems().add(deleteSubjectItem);
         subjectsList.setContextMenu(subjectMenu);
 
-        // Right-click actions on playlists
+        ContextMenu assessmentMenu = new ContextMenu();
+        MenuItem deleteAssessmentItem = new MenuItem("delete assessment");
+        assessmentMenu.getItems().add(deleteAssessmentItem);
+        assessmentsList.setContextMenu(assessmentMenu);
+
+        // Delete student
         studentsList.setOnContextMenuRequested(e -> {
             Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
-            if(selectedStudent == null) return;
+            if (selectedStudent == null) return;
 
             deleteStudentItem.setOnAction(actionEvent -> {
-                // Removes the selected playlist from the GUI and backend data
                 studentsList.getItems().remove(selectedStudent);
                 gradebook.removeStudent(selectedStudent);
+                subjectsList.getItems().clear();
+                assessmentsList.getItems().clear();
 
-                // Updates the GUI
-                Student newSelectedStudent = studentsList.getSelectionModel().getSelectedItem();
-                // currentPlaylistLabel.setText(newSelectedPlaylist.toString());
-                subjectsList.getItems().setAll(newSelectedStudent.getSubjects());
-
-                // Shows the action feedback to the user
-                // actionDoneLabel.setText("Deleted playlist: " + selectedPlaylist.toString());
+                Student newSelected = studentsList.getSelectionModel().getSelectedItem();
+                if (newSelected != null) {
+                    subjectsList.getItems().setAll(newSelected.getSubjects());
+                }
             });
         });
 
-        // When a playlist is clicked, update the song list
+        // Click student to load their subjects
         studentsList.setOnMouseClicked(e -> {
             Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
-
             if (selectedStudent == null) return;
 
-            // currentPlaylistLabel.setText(selectedPlaylist.toString());
             subjectsList.getItems().setAll(selectedStudent.getSubjects());
+            assessmentsList.getItems().clear();
+            totalGradeAvgLabel.setText(String.format("%.2f%%", selectedStudent.getAverage()));
         });
 
-        // When a song is clicked, play the song and add the rest on the list to queue 
+        // Delete subject
+        subjectsList.setOnContextMenuRequested(e -> {
+            Subject selectedSubject = subjectsList.getSelectionModel().getSelectedItem();
+            if (selectedSubject == null) return;
+
+            deleteSubjectItem.setOnAction(actionEvent -> {
+                Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
+                if (selectedStudent == null) return;
+
+                selectedStudent.getSubjects().remove(selectedSubject);
+                subjectsList.getItems().remove(selectedSubject);
+                assessmentsList.getItems().clear();
+            });
+        });
+
+        // Click subject to load its assessments
         subjectsList.setOnMouseClicked(e -> {
-            if (e.getButton() == MouseButton.PRIMARY) {
-                Subject selectedSubject = subjectsList.getSelectionModel().getSelectedItem();
-                int selectedIndex = subjectsList.getSelectionModel().getSelectedIndex();
+            Subject selectedSubject = subjectsList.getSelectionModel().getSelectedItem();
+            if (selectedSubject == null) return;
 
-                if(selectedSubject == null) return;
-
-                // // Play the remaining songs in order from the playlist
-                // java.util.ArrayList<Song> currentSongs = new java.util.ArrayList<>(songsList.getItems());
-                // musicPlayer.playFromList(currentSongs, selectedIndex); // Plays the current song and adds the rest to the queue
-                // pauseOrPlayButton.setGraphic(pauseIcon);
+            assessmentsList.getItems().clear();
+            assessmentsList.getItems().addAll(selectedSubject.getAssignments());
+            assessmentsList.getItems().addAll(selectedSubject.getTests());
+            if (selectedSubject.getExam() != null) {
+                assessmentsList.getItems().add(selectedSubject.getExam());
             }
         });
 
-        // Creates a playlist with a name using the specified text in the text box
+        // Delete assessment
+        assessmentsList.setOnContextMenuRequested(e -> {
+            Assessment selectedAssessment = assessmentsList.getSelectionModel().getSelectedItem();
+            if (selectedAssessment == null) return;
+
+            deleteAssessmentItem.setOnAction(actionEvent -> {
+                Subject selectedSubject = subjectsList.getSelectionModel().getSelectedItem();
+                if (selectedSubject == null) return;
+
+                selectedSubject.removeAssessment(selectedAssessment);
+                assessmentsList.getItems().remove(selectedAssessment);
+            });
+        });
+
+        // Add new student
         newStudentButton.setOnAction(e -> {
             String studentName = newStudentField.getText().trim();
             newStudentField.clear();
-
-            if(studentName.isEmpty()) return;
+            if (studentName.isEmpty()) return;
 
             Student student = new Student(studentName);
             gradebook.addStudent(student);
             studentsList.getItems().add(student);
-            // actionDoneLabel.setText("Created playlist: " + playlistName);
+        });
+
+        // Add new subject to selected student
+        newSubjectButton.setOnAction(e -> {
+            Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
+            if (selectedStudent == null) return;
+
+            String subjectName = newSubjectField.getText().trim();
+            newSubjectField.clear();
+            if (subjectName.isEmpty()) return;
+
+            double assignmentWeight = Double.parseDouble(assignmentWeightField.getText());
+            double testWeight = Double.parseDouble(testWeightField.getText());
+            double examWeight = Double.parseDouble(examWeightField.getText());
+            assignmentWeightField.clear();
+            testWeightField.clear();
+            examWeightField.clear();
+
+            Subject subject = new Subject(subjectName, testWeight, assignmentWeight, examWeight);
+            selectedStudent.addSubject(subject);
+            subjectsList.getItems().add(subject);
+        });
+
+        // Add new assessment to selected subject
+        newAssessmentButton.setOnAction(e -> {
+            Subject selectedSubject = subjectsList.getSelectionModel().getSelectedItem();
+            if (selectedSubject == null) return;
+
+            String assessmentName = newAssessmentField.getText().trim();
+            String type = assessmentTypeBox.getValue();
+            newAssessmentField.clear();
+            if (assessmentName.isEmpty() || type == null) return;
+
+            double score, maxScore;
+            try {
+                score = Double.parseDouble(scoreField.getText().trim());
+                maxScore = Double.parseDouble(maxScoreField.getText().trim());
+            } catch (NumberFormatException ex) {
+                return;
+            }
+            scoreField.clear();
+            maxScoreField.clear();
+
+            Assessment assessment = new Assessment(assessmentName, score, maxScore, type);
+            selectedSubject.addAssessment(assessment);
+            assessmentsList.getItems().add(assessment);
         });
     }
+
 }
