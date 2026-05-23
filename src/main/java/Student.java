@@ -18,4 +18,9 @@ public class Student {
     public ArrayList<Subject> getSubjects() {
         return subjects;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

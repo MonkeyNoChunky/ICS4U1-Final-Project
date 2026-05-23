@@ -57,4 +57,9 @@ public class Subject {
     public Assessment getExam() {
         return exam;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

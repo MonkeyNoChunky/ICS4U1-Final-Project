@@ -62,7 +62,11 @@ public class Gradebook {
         return null;
     }
 
-    public boolean removeStudent(String name) {
-        return students.removeIf(s -> s.getName().equalsIgnoreCase(name));
+    public void removeStudent(Student removedStudent) {
+        for(int i = 0; i < students.size(); i++) {
+            if(students.get(i) == removedStudent) {
+                students.remove(i);
+            }
+        }
     }
 }
