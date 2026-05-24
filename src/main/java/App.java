@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -184,6 +185,11 @@ public class App {
             newStudentField.clear();
             if (studentName.isEmpty()) return;
 
+            if (gradebook.getStudentByName(studentName) != null) {
+                showError("Duplicate student", "A student with that name already exists.");
+                return;
+            }
+
             Student student = new Student(studentName);
             gradebook.addStudent(student);
             studentsList.getItems().add(student);
@@ -197,6 +203,13 @@ public class App {
             String subjectName = newSubjectField.getText().trim();
             newSubjectField.clear();
             if (subjectName.isEmpty()) return;
+
+            for (Subject subject : selectedStudent.getSubjects()) {
+                if (subject.getName().equalsIgnoreCase(subjectName)) {
+                    showError("Duplicate subject", "This student already has a subject with that name.");
+                    return;
+                }
+            }
 
             double assignmentWeight = Double.parseDouble(assignmentWeightField.getText());
             double testWeight = Double.parseDouble(testWeightField.getText());
@@ -225,15 +238,44 @@ public class App {
                 score = Double.parseDouble(scoreField.getText().trim());
                 maxScore = Double.parseDouble(maxScoreField.getText().trim());
             } catch (NumberFormatException ex) {
+                showError("Invalid score", "Score and max score must be valid numbers.");
                 return;
             }
+
+            if (score < 0 || maxScore <= 0) {
+                showError("Invalid score", "Score must be non-negative and max score must be greater than 0.");
+                return;
+            }
+
+            if (score > maxScore) {
+                showError("Invalid score", "Score cannot be greater than max score.");
+                return;
+            }
+
+            if (type.equals("exam") && selectedSubject.getExam() != null) {
+                showError("Exam already exists", "Each subject can have only one exam.");
+                return;
+            }
+
             scoreField.clear();
             maxScoreField.clear();
 
             Assessment assessment = new Assessment(assessmentName, score, maxScore, type);
-            selectedSubject.addAssessment(assessment);
+            boolean added = selectedSubject.addAssessment(assessment);
+            if (!added) {
+                showError("Cannot add assessment", "This assessment could not be added.");
+                return;
+            }
             assessmentsList.getItems().add(assessment);
         });
+    }
+
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 }

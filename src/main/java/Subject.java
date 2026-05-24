@@ -16,16 +16,23 @@ public class Subject {
         this.examWeight = examWeight;
     }
 
-    public void addAssessment(Assessment assessment) {
-        if(assessment.getType().equals("exam")) {
+    public boolean addAssessment(Assessment assessment) {
+        if (assessment.getType().equals("exam")) {
+            if (exam != null) {
+                return false;
+            }
             exam = assessment;
+            return true;
         }
-        if(assessment.getType().equals("test")) {
+        if (assessment.getType().equals("test")) {
             tests.add(assessment);
+            return true;
         }
-        if(assessment.getType().equals("assignment")) {
+        if (assessment.getType().equals("assignment")) {
             assignments.add(assessment);
+            return true;
         }
+        return false;
     }
 
     public void removeAssessment(Assessment assessment) {
