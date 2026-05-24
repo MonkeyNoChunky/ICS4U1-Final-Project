@@ -30,6 +30,7 @@ public class App {
     @FXML private VBox middlePanel;
     @FXML private Label subjectsLabel;
     @FXML private ListView<Subject> subjectsList;
+    @FXML private Label subjectAverageLabel;
     @FXML private TextField newSubjectField;
     @FXML private TextField assignmentWeightField;
     @FXML private TextField testWeightField;
@@ -75,7 +76,11 @@ public class App {
         Student initialStudent = studentsList.getSelectionModel().getSelectedItem();
         if (initialStudent != null) {
             subjectsList.getItems().setAll(initialStudent.getSubjects());
+            totalGradeAvgLabel.setText(String.format("%.2f%%", initialStudent.getAverage()));
+        } else {
+            totalGradeAvgLabel.setText("-");
         }
+        subjectAverageLabel.setText("Subject Avg: -");
 
         // Right-click menus
         ContextMenu studentMenu = new ContextMenu();
@@ -114,11 +119,18 @@ public class App {
         // Click student to load their subjects
         studentsList.setOnMouseClicked(e -> {
             Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
-            if (selectedStudent == null) return;
+            if (selectedStudent == null) {
+                totalGradeAvgLabel.setText("-");
+                subjectsList.getItems().clear();
+                assessmentsList.getItems().clear();
+                subjectAverageLabel.setText("Subject Avg: -");
+                return;
+            }
 
             subjectsList.getItems().setAll(selectedStudent.getSubjects());
             assessmentsList.getItems().clear();
             totalGradeAvgLabel.setText(String.format("%.2f%%", selectedStudent.getAverage()));
+            subjectAverageLabel.setText("Subject Avg: -");
         });
 
         // Delete subject
@@ -139,7 +151,11 @@ public class App {
         // Click subject to load its assessments
         subjectsList.setOnMouseClicked(e -> {
             Subject selectedSubject = subjectsList.getSelectionModel().getSelectedItem();
-            if (selectedSubject == null) return;
+            if (selectedSubject == null) {
+                assessmentsList.getItems().clear();
+                subjectAverageLabel.setText("Subject Avg: -");
+                return;
+            }
 
             assessmentsList.getItems().clear();
             assessmentsList.getItems().addAll(selectedSubject.getAssignments());
@@ -147,6 +163,7 @@ public class App {
             if (selectedSubject.getExam() != null) {
                 assessmentsList.getItems().add(selectedSubject.getExam());
             }
+            subjectAverageLabel.setText(String.format("Subject Avg: %.2f%%", selectedSubject.getAverage()));
         });
 
         // Delete assessment

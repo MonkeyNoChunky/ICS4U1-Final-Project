@@ -104,7 +104,12 @@
                   </Label>
                </children>
             </HBox>
-            <ListView fx:id="subjectsList" prefHeight="389.0" prefWidth="233.0" />
+            <ListView fx:id="subjectsList" prefHeight="320.0" prefWidth="233.0" />
+            <Label fx:id="subjectAverageLabel" text="Subject Avg: -" style="-fx-padding: 5 0 0 0;">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
             <TextField fx:id="newSubjectField" promptText="new subject name">
                <font>
                   <Font size="15.0" />
