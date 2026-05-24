@@ -200,7 +200,10 @@ public class App {
         newStudentButton.setOnAction(e -> {
             String studentName = newStudentField.getText().trim();
             newStudentField.clear();
-            if (studentName.isEmpty()) return;
+            if (studentName.isEmpty()) {
+                showError("Invalid name", "Student name cannot be empty or contain only whitespace.");
+                return;
+            }
 
             if (gradebook.getStudentByName(studentName) != null) {
                 showError("Duplicate student", "A student with that name already exists.");
@@ -215,11 +218,17 @@ public class App {
         // Add new subject to selected student
         newSubjectButton.setOnAction(e -> {
             Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
-            if (selectedStudent == null) return;
+            if (selectedStudent == null) {
+                showError("No student selected", "Please select a student before adding a subject.");
+                return;
+            }
 
             String subjectName = newSubjectField.getText().trim();
             newSubjectField.clear();
-            if (subjectName.isEmpty()) return;
+            if (subjectName.isEmpty()) {
+                showError("Invalid name", "Subject name cannot be empty or contain only whitespace.");
+                return;
+            }
 
             for (Subject subject : selectedStudent.getSubjects()) {
                 if (subject.getName().equalsIgnoreCase(subjectName)) {
@@ -262,12 +271,18 @@ public class App {
         // Add new assessment to selected subject
         newAssessmentButton.setOnAction(e -> {
             Subject selectedSubject = subjectsList.getSelectionModel().getSelectedItem();
-            if (selectedSubject == null) return;
+            if (selectedSubject == null) {
+                showError("No subject selected", "Please select a subject before adding an assessment.");
+                return;
+            }
 
             String assessmentName = newAssessmentField.getText().trim();
             String type = assessmentTypeBox.getValue();
             newAssessmentField.clear();
-            if (assessmentName.isEmpty() || type == null) return;
+            if (assessmentName.isEmpty()) {
+                showError("Invalid name", "Assessment name cannot be empty or contain only whitespace.");
+                return;
+            }
 
             double score, maxScore;
             try {
