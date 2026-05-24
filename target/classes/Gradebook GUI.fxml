@@ -82,6 +82,7 @@
                   <Font size="18.0" />
                </font>
             </Label>
+            <Label fx:id="assessmentTypeLabel" text="Type: -" />
             <Label fx:id="assessmentScoreLabel" text="Score: -" />
             <Label fx:id="assessmentMaxScoreLabel" text="Max Score: -" />
             <Label fx:id="assessmentPercentLabel" text="Percent: -" />

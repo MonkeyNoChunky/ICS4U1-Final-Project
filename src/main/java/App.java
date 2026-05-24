@@ -43,6 +43,7 @@ public class App {
     @FXML private Button newAssessmentButton;
     @FXML private ListView<Assessment> assessmentsList;
     @FXML private Label assessmentDetailsTitleLabel;
+    @FXML private Label assessmentTypeLabel;
     @FXML private Label assessmentScoreLabel;
     @FXML private Label assessmentMaxScoreLabel;
     @FXML private Label assessmentPercentLabel;
@@ -164,12 +165,14 @@ public class App {
         // Show selected assessment details
         assessmentsList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedAssessment) -> {
             if (selectedAssessment == null) {
+                assessmentTypeLabel.setText("Type: -");
                 assessmentScoreLabel.setText("Score: -");
                 assessmentMaxScoreLabel.setText("Max Score: -");
                 assessmentPercentLabel.setText("Percent: -");
                 return;
             }
 
+            assessmentTypeLabel.setText("Type: " + selectedAssessment.getType());
             assessmentScoreLabel.setText("Score: " + selectedAssessment.getRawScore());
             assessmentMaxScoreLabel.setText("Max Score: " + selectedAssessment.getMaxScore());
             assessmentPercentLabel.setText(String.format("Percent: %.2f%%", selectedAssessment.getScore() * 100));
