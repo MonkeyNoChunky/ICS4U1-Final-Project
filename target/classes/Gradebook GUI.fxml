@@ -76,7 +76,15 @@
                   <Font size="19.0" />
                </font>
             </Label>
-            <ListView fx:id="assessmentsList" prefHeight="336.0" prefWidth="480.0" />
+            <ListView fx:id="assessmentsList" prefHeight="300.0" prefWidth="480.0" />
+            <Label fx:id="assessmentDetailsTitleLabel" text="Assessment Details" style="-fx-padding: 10 0 0 0;">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="assessmentScoreLabel" text="Score: -" />
+            <Label fx:id="assessmentMaxScoreLabel" text="Max Score: -" />
+            <Label fx:id="assessmentPercentLabel" text="Percent: -" />
          </children>
       </VBox>
    </right>

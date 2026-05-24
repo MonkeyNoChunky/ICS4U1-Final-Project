@@ -42,9 +42,13 @@ public class App {
     @FXML private TextField maxScoreField;
     @FXML private Button newAssessmentButton;
     @FXML private ListView<Assessment> assessmentsList;
+    @FXML private Label assessmentDetailsTitleLabel;
+    @FXML private Label assessmentScoreLabel;
+    @FXML private Label assessmentMaxScoreLabel;
+    @FXML private Label assessmentPercentLabel;
 
     public void init(Stage stage, Gradebook gradebook) throws IOException {
-        FXMLLoader loader = new FXMLLoader(App.class.getResource("Gradebook GUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/Gradebook GUI.fxml"));
         Parent scene = loader.load();
 
         App app = loader.getController();
@@ -155,6 +159,20 @@ public class App {
                 selectedSubject.removeAssessment(selectedAssessment);
                 assessmentsList.getItems().remove(selectedAssessment);
             });
+        });
+
+        // Show selected assessment details
+        assessmentsList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedAssessment) -> {
+            if (selectedAssessment == null) {
+                assessmentScoreLabel.setText("Score: -");
+                assessmentMaxScoreLabel.setText("Max Score: -");
+                assessmentPercentLabel.setText("Percent: -");
+                return;
+            }
+
+            assessmentScoreLabel.setText("Score: " + selectedAssessment.getRawScore());
+            assessmentMaxScoreLabel.setText("Max Score: " + selectedAssessment.getMaxScore());
+            assessmentPercentLabel.setText(String.format("Percent: %.2f%%", selectedAssessment.getScore() * 100));
         });
 
         // Add new student
