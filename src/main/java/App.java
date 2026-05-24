@@ -228,9 +228,28 @@ public class App {
                 }
             }
 
-            double assignmentWeight = Double.parseDouble(assignmentWeightField.getText());
-            double testWeight = Double.parseDouble(testWeightField.getText());
-            double examWeight = Double.parseDouble(examWeightField.getText());
+            double assignmentWeight, testWeight, examWeight;
+            try {
+                assignmentWeight = Double.parseDouble(assignmentWeightField.getText().trim());
+                testWeight = Double.parseDouble(testWeightField.getText().trim());
+                examWeight = Double.parseDouble(examWeightField.getText().trim());
+            } catch (NumberFormatException ex) {
+                showError("Invalid weight", "All weights must be valid numbers.");
+                return;
+            }
+
+            double totalWeight = assignmentWeight + testWeight + examWeight;
+            if (Math.abs(totalWeight - 1.0) > 0.0001) {
+                showError("Invalid weights", 
+                    String.format("Weights must add up to 1.0 (100%%). Current total: %.4f", totalWeight));
+                return;
+            }
+
+            if (assignmentWeight < 0 || testWeight < 0 || examWeight < 0) {
+                showError("Invalid weights", "Weights cannot be negative.");
+                return;
+            }
+
             assignmentWeightField.clear();
             testWeightField.clear();
             examWeightField.clear();
@@ -294,5 +313,4 @@ public class App {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
 }
