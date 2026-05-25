@@ -16,14 +16,14 @@ public class Student {
     /**
      * Adds a subject object to the student
      * 
-    * @param subject tbe subject wanting to be added
+    * @param subject the subject wanting to be added
     */
     public void addSubject(Subject subject) {
         subjects.add(subject);
     }
 
     /**
-    * @return returns the String assessment name
+    * @return returns the String student name
     */
     public String getName() {
         return name;

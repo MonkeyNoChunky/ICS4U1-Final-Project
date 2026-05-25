@@ -118,8 +118,10 @@ public class App {
             if (selectedStudent == null) return;
 
             deleteStudentItem.setOnAction(actionEvent -> {
+                // On delete student, gradebook is updated, subject and assessment lists are updated
                 studentsList.getItems().remove(selectedStudent);
                 gradebook.removeStudent(selectedStudent);
+                gradebook.save();
                 subjectsList.getItems().clear();
                 assessmentsList.getItems().clear();
 
@@ -134,13 +136,10 @@ public class App {
         studentsList.setOnMouseClicked(e -> {
             Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
             if (selectedStudent == null) {
-                totalGradeAvgLabel.setText("-");
-                subjectsList.getItems().clear();
-                assessmentsList.getItems().clear();
-                subjectAverageLabel.setText("Subject Avg: -");
                 return;
             }
 
+            // On selecting a student, subject and assessment lists are updated, total and subject grades are updated
             subjectsList.getItems().setAll(selectedStudent.getSubjects());
             assessmentsList.getItems().clear();
             totalGradeAvgLabel.setText(String.format("%.2f%%", selectedStudent.getAverage()));
@@ -156,10 +155,13 @@ public class App {
                 Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
                 if (selectedStudent == null) return;
 
+                // On deleting a subject, subject and assessment lists are updated, total and subject grades are updated
                 selectedStudent.getSubjects().remove(selectedSubject);
                 subjectsList.getItems().remove(selectedSubject);
                 gradebook.save();
                 assessmentsList.getItems().clear();
+                totalGradeAvgLabel.setText(String.format("%.2f%%", selectedStudent.getAverage()));
+                subjectAverageLabel.setText("Subject Avg: -");  
             });
         });
 
@@ -172,6 +174,7 @@ public class App {
                 return;
             }
 
+            // On selecting a subject, assessments list is updated and subject average label is updated
             assessmentsList.getItems().clear();
             assessmentsList.getItems().addAll(selectedSubject.getAssignments());
             assessmentsList.getItems().addAll(selectedSubject.getTests());
@@ -190,9 +193,16 @@ public class App {
                 Subject selectedSubject = subjectsList.getSelectionModel().getSelectedItem();
                 if (selectedSubject == null) return;
 
+                // On deleting an assessment, assessment list and gradebook is updated
                 selectedSubject.removeAssessment(selectedAssessment);
                 assessmentsList.getItems().remove(selectedAssessment);
                 gradebook.save();
+
+                // Updating the grade average GUIs
+                Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
+                if (selectedStudent == null || selectedSubject == null) return;
+                totalGradeAvgLabel.setText(String.format("%.2f%%", selectedStudent.getAverage()));
+                subjectAverageLabel.setText(String.format("Subject Avg: %.2f%%", selectedSubject.getAverage()));
             });
         });
 
@@ -265,6 +275,7 @@ public class App {
             }
 
             double totalWeight = assignmentWeight + testWeight + examWeight;
+            // Using a small tolerance to account for double precision errors
             if (Math.abs(totalWeight - 1.0) > 0.0001) {
                 showError("Invalid weights", 
                     String.format("Weights must add up to 1.0 (100%%). Current total: %.4f", totalWeight));
@@ -332,18 +343,21 @@ public class App {
 
             // Creating a new assessment object with the information from the TextFields
             Assessment assessment = new Assessment(assessmentName, score, maxScore, type);
-            boolean added = selectedSubject.addAssessment(assessment);
-            if (!added) {
-                showError("Cannot add assessment", "This assessment could not be added.");
-                return;
-            }
+            selectedSubject.addAssessment(assessment);
             assessmentsList.getItems().add(assessment);
             gradebook.save();
+
+            // Updating the grade average GUIs
+            Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
+            if (selectedStudent == null || selectedSubject == null) return;
+            totalGradeAvgLabel.setText(String.format("%.2f%%", selectedStudent.getAverage()));
+            subjectAverageLabel.setText(String.format("Subject Avg: %.2f%%", selectedSubject.getAverage()));
         });
     }
 
      /**
-    * Creates a popup window on the screen. Used to alert the user that the previous could not be executed
+    * Creates a popup window on the screen 
+    * Used to alert the user that the previous could not be executed
     *
     * @param title The title/header name of the window
     * @param message the message in small text within the popup window

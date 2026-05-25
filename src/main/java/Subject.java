@@ -28,25 +28,17 @@ public class Subject {
     * Adds an assessment object to the Subject 
     *
     * @param assessment The assessment object, carrying its score and type of assessment
-    * @return returns if adding the assessment was successful
     */
-    public boolean addAssessment(Assessment assessment) {
+    public void addAssessment(Assessment assessment) {
         if (assessment.getType().equals("exam")) {
-            if (exam != null) {
-                return false;
-            }
             exam = assessment;
-            return true;
         }
         if (assessment.getType().equals("test")) {
             tests.add(assessment);
-            return true;
         }
         if (assessment.getType().equals("assignment")) {
             assignments.add(assessment);
-            return true;
         }
-        return false;
     }
 
     /**
@@ -94,6 +86,7 @@ public class Subject {
         }
 
         if (activeWeight == 0) return 0;
+        // Weights are controlled by activeWeight so empty categories dont count as 0%
         return total / activeWeight;
     }
 
