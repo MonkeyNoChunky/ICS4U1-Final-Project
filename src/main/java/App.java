@@ -50,6 +50,14 @@ public class App {
     @FXML private Label assessmentMaxScoreLabel;
     @FXML private Label assessmentPercentLabel;
 
+    /**
+    * Loads the FXML file, matches a App instance with the FXML loader, 
+    * and starts the app
+    *
+    * @param stage the main JavaFX stage
+    * @param gradebook the gradebook instance used to store students
+    * @throws IOException if the fxml can't be loaded
+    */
     public void init(Stage stage, Gradebook gradebook) throws IOException {
         FXMLLoader loader = new FXMLLoader(App.class.getResource("/Gradebook GUI.fxml"));
         Parent scene = loader.load();
@@ -63,12 +71,18 @@ public class App {
         stage.show();
     }
 
+    /**
+    * Setup the GUI by loading data into ListViews,
+    * adding contextMenus, and coding all event listeners
+    *
+    * @param gradebook gradebook instance used for all students
+    */
     public void setup(Gradebook gradebook) {
-        // Populate assessment type dropdown
+        // Populate the assessment type dropdown with the types of assessments
         assessmentTypeBox.getItems().addAll("assignment", "test", "exam");
         assessmentTypeBox.setValue("assignment");
 
-        // Load saved students
+        // Load the saved students from the gradebook
         studentsList.getItems().addAll(gradebook.getStudents());
         studentsList.getSelectionModel().select(0);
 
@@ -98,7 +112,7 @@ public class App {
         assessmentMenu.getItems().add(deleteAssessmentItem);
         assessmentsList.setContextMenu(assessmentMenu);
 
-        // Delete student
+        // Event listener for the "Delete Student" right-click menu
         studentsList.setOnContextMenuRequested(e -> {
             Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
             if (selectedStudent == null) return;
@@ -116,7 +130,7 @@ public class App {
             });
         });
 
-        // Click student to load their subjects
+        // Listener that allows the user to select a student by clicking the component
         studentsList.setOnMouseClicked(e -> {
             Student selectedStudent = studentsList.getSelectionModel().getSelectedItem();
             if (selectedStudent == null) {
@@ -133,7 +147,7 @@ public class App {
             subjectAverageLabel.setText("Subject Avg: -");
         });
 
-        // Delete subject
+         // Event listener for the "Delete Subject" right-click menu
         subjectsList.setOnContextMenuRequested(e -> {
             Subject selectedSubject = subjectsList.getSelectionModel().getSelectedItem();
             if (selectedSubject == null) return;
@@ -144,6 +158,7 @@ public class App {
 
                 selectedStudent.getSubjects().remove(selectedSubject);
                 subjectsList.getItems().remove(selectedSubject);
+                gradebook.save();
                 assessmentsList.getItems().clear();
             });
         });
@@ -166,7 +181,7 @@ public class App {
             subjectAverageLabel.setText(String.format("Subject Avg: %.2f%%", selectedSubject.getAverage()));
         });
 
-        // Delete assessment
+         // Event listener for the "Delete Assessment" right-click menu
         assessmentsList.setOnContextMenuRequested(e -> {
             Assessment selectedAssessment = assessmentsList.getSelectionModel().getSelectedItem();
             if (selectedAssessment == null) return;
@@ -177,10 +192,11 @@ public class App {
 
                 selectedSubject.removeAssessment(selectedAssessment);
                 assessmentsList.getItems().remove(selectedAssessment);
+                gradebook.save();
             });
         });
 
-        // Show selected assessment details
+        // Show the details for the selected assessment
         assessmentsList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedAssessment) -> {
             if (selectedAssessment == null) {
                 assessmentTypeLabel.setText("Type: -");
@@ -193,7 +209,7 @@ public class App {
             assessmentTypeLabel.setText("Type: " + selectedAssessment.getType());
             assessmentScoreLabel.setText("Score: " + selectedAssessment.getRawScore());
             assessmentMaxScoreLabel.setText("Max Score: " + selectedAssessment.getMaxScore());
-            assessmentPercentLabel.setText(String.format("Percent: %.2f%%", selectedAssessment.getScore() * 100));
+            assessmentPercentLabel.setText(String.format("Percent: %.2f%%", selectedAssessment.getScore()));
         });
 
         // Add new student
@@ -237,6 +253,7 @@ public class App {
                 }
             }
 
+            // Grabbing the weights of assessments from the TextField components
             double assignmentWeight, testWeight, examWeight;
             try {
                 assignmentWeight = Double.parseDouble(assignmentWeightField.getText().trim());
@@ -263,9 +280,11 @@ public class App {
             testWeightField.clear();
             examWeightField.clear();
 
+            // Create a new subject object with the name and different weights
             Subject subject = new Subject(subjectName, testWeight, assignmentWeight, examWeight);
             selectedStudent.addSubject(subject);
             subjectsList.getItems().add(subject);
+            gradebook.save();
         });
 
         // Add new assessment to selected subject
@@ -311,6 +330,7 @@ public class App {
             scoreField.clear();
             maxScoreField.clear();
 
+            // Creating a new assessment object with the information from the TextFields
             Assessment assessment = new Assessment(assessmentName, score, maxScore, type);
             boolean added = selectedSubject.addAssessment(assessment);
             if (!added) {
@@ -318,9 +338,16 @@ public class App {
                 return;
             }
             assessmentsList.getItems().add(assessment);
+            gradebook.save();
         });
     }
 
+     /**
+    * Creates a popup window on the screen. Used to alert the user that the previous could not be executed
+    *
+    * @param title The title/header name of the window
+    * @param message the message in small text within the popup window
+    */
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);

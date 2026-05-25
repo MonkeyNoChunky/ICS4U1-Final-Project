@@ -9,6 +9,14 @@ public class Subject {
     private ArrayList<Assessment> assignments = new ArrayList<>();
     private Assessment exam; 
 
+    /**
+    * Constructor for the Subject object 
+    *
+    * @param name the String name
+    * @param testsWeight the decimal amount that the tests weigh in a subject. Ex. 30% = 0.3
+    * @param assignmentsWeight the decimal amount that the assignments weigh in a subject
+    * @param examWeight the decimal amount that the exam weighs in a subject
+    */
     public Subject(String name, double testsWeight, double assignmentsWeight, double examWeight) {
         this.name = name;
         this.testsWeight = testsWeight;
@@ -16,6 +24,12 @@ public class Subject {
         this.examWeight = examWeight;
     }
 
+    /**
+    * Adds an assessment object to the Subject 
+    *
+    * @param assessment The assessment object, carrying its score and type of assessment
+    * @return returns if adding the assessment was successful
+    */
     public boolean addAssessment(Assessment assessment) {
         if (assessment.getType().equals("exam")) {
             if (exam != null) {
@@ -35,6 +49,11 @@ public class Subject {
         return false;
     }
 
+    /**
+    * Removes an assessment currently loaded in the subject
+    *
+    * @param assessment Removed assessment
+    */
     public void removeAssessment(Assessment assessment) {
         if (assessment.getType().equals("exam") && exam == assessment) {
             exam = null;
@@ -45,6 +64,12 @@ public class Subject {
         }
     }
 
+    /**
+    * Returns the current average in the subject. 
+    * Calculates using the tests, assignments, and exams loaded
+    *
+    * @return the current grade in percentage of the subject
+    */
     public double getAverage() {
         double total = 0;
         double activeWeight = 0;
@@ -72,30 +97,51 @@ public class Subject {
         return total / activeWeight;
     }
 
+    /**
+    * @return returns the name of the subject
+    */
     public String getName() {
         return name;
     }
 
+    /**
+    * @return returns the ArrayList of the tests
+    */
     public ArrayList<Assessment> getTests() {
         return tests;
     }
 
+    /**
+    * @return returns the ArrayList of assignments
+    */
     public ArrayList<Assessment> getAssignments() {
         return assignments;
     }
 
+    /**
+    * @return returns the exam object
+    */
     public Assessment getExam() {
         return exam;
     }
 
+    /**
+    * @return returns the weight of the tests in decimal format (Ex. 30% = 0.3)
+    */
     public double getTestsWeight() {
         return testsWeight;
     }
 
+    /**
+    * @return returns the weight of the assignments in decimal format (Ex. 30% = 0.3)
+    */
     public double getAssignmentsWeight() {
         return assignmentsWeight;
     }
 
+    /**
+    * @return returns the weight of the exam in decimal format (Ex. 30% = 0.3)
+    */
     public double getExamWeight() {
         return examWeight;
     }
